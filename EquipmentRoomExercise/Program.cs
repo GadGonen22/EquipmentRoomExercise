@@ -3,7 +3,19 @@ using System;
 // <summary>
 //Todo: צרו מחלקת חריגים המטפלת במקרים בהם אין מספיק מחשבים זמינים להשאלה.
 //שם המחלקה צריך להיות EquipmentUnavailableException.
+ 
+class EquipmentUnavailableException: Exception 
+{
+    public int Want_borrow { get; }
+    public int Diffrence { get; }
 
+    public EquipmentUnavailableException(int availableComputers, int Want_borrow):base("not enough equipment available")
+    {
+        Want_borrow = Want_borrow;
+        Diffrence = availableComputers - Want_borrow;
+    }
+
+}
 
 
 class EquipmentRoom
@@ -31,9 +43,12 @@ class EquipmentRoom
 
     public void Borrow(int amount)
     {
-       
-            // TODO: יש לזרוק חריגה מתאימה כאשר אין מספיק מחשבים זמינים.
-           
+
+        // TODO: יש לזרוק חריגה מתאימה כאשר אין מספיק מחשבים זמינים.
+        if (Want_borrow > AvailableComputers)
+        {
+            throw new EquipmentUnavailableException(amount, AvailableComputers);
+        }
      
 
         AvailableComputers -= amount;
@@ -58,9 +73,14 @@ class Program
 
         room.Borrow(4);
         Console.WriteLine("ממשיכים בתוכנית...");
-
-        room.Borrow(8);
-
+        try
+        {
+            room.Borrow(8);
+        }
+        catch (EquipmentUnavailableException ex)
+        { 
+            Comsole.WriteLine(ex.Message);
+        }
         Console.WriteLine("מספר המחשבים הזמינים: " + room.AvailableComputers);
     }
 }
